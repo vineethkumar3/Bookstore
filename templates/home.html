@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Book Store - Welcome</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="home-page">
+
+    <header class="store-header">
+        <h1>Welcome to Vineeth's Book Store</h1>
+        <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+
+    </header>
+
+    <main class="book-container">
+        {% for i in range(1, 10) %}
+        <div class="book-card">
+            <img src="https://placehold.co/200x300?text=Book+{{ i }}" alt="Book {{ i }}">
+            <h4>Book Title {{ i }}</h4>
+            <button>Buy Now</button>
+        </div>
+        {% endfor %}
+    </main>
+
+</body>
+</html>
