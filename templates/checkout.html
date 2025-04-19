@@ -23,37 +23,12 @@
         </form>
 
         <p id="success" style="display:none; font-weight: bold; color: green; text-align: center; margin-top: 20px;">✅ Payment Successful!</p>
+        <a href="{{ url_for('home') }}" id="home-link" style="display: none; text-align: center; font-weight: bold; margin-top: 20px;" class="nav-btn back-btn">← Go to Home</a>
+
     </main>
-
+<script src="{{ url_for('static', filename='main.js') }}"></script>
     <script>
-        const books = [
-            {id: 1, title: "Atomic Habits"},
-            {id: 2, title: "Rich Dad Poor Dad"},
-            {id: 3, title: "The Alchemist"},
-            {id: 4, title: "Harry Potter"},
-            {id: 5, title: "To Kill a Mockingbird"},
-            {id: 6, title: "Think and Grow Rich"},
-            {id: 7, title: "The Power of Now"},
-            {id: 8, title: "The Subtle Art..."},
-            {id: 9, title: "Ikigai"}
-        ];
-
-        const cart = JSON.parse(localStorage.getItem('cart')) || {};
-        const summary = document.getElementById("summary");
-
-        Object.keys(cart).forEach(id => {
-            const book = books.find(b => b.id == id);
-            const qty = cart[id];
-            if (book) {
-                summary.innerHTML += `<li>${book.title} × ${qty}</li>`;
-            }
-        });
-
-        function submitPayment(e) {
-            e.preventDefault();
-            localStorage.removeItem('cart'); // Clear cart
-            document.getElementById('success').style.display = 'block';
-        }
-    </script>
+    document.querySelector("form")?.addEventListener("submit", submitPayment);
+</script>
 </body>
 </html>

@@ -29,77 +29,12 @@
         {% endfor %}
     </main>
 
+
+<script src="{{ url_for('static', filename='main.js') }}"></script>
 <script>
-function getCart() {
-    return JSON.parse(localStorage.getItem('cart')) || {};
-}
-
-function saveCart(cart) {
-    localStorage.setItem('cart', JSON.stringify(cart));
-}
-
-function buyNow(btn) {
-    const actionDiv = btn.parentElement;
-    const bookId = actionDiv.dataset.id;
-    const cart = getCart();
-    cart[bookId] = 1;
-    saveCart(cart);
-
-    actionDiv.innerHTML = `
-        <button onclick="decrease(this)">-</button>
-        <span class="count">1</span>
-        <button onclick="increase(this)">+</button>
-    `;
-}
-
-function increase(btn) {
-    const countSpan = btn.parentElement.querySelector(".count");
-    const bookId = btn.parentElement.dataset.id;
-    const cart = getCart();
-    cart[bookId] = (cart[bookId] || 1) + 1;
-    saveCart(cart);
-    countSpan.textContent = cart[bookId];
-}
-
-function decrease(btn) {
-    const countSpan = btn.parentElement.querySelector(".count");
-    const bookId = btn.parentElement.dataset.id;
-    const cart = getCart();
-    let count = cart[bookId] || 1;
-    if (count > 1) {
-        cart[bookId] = count - 1;
-        saveCart(cart);
-        countSpan.textContent = cart[bookId];
-    } else {
-        delete cart[bookId];
-        saveCart(cart);
-        btn.parentElement.innerHTML = `<button onclick="buyNow(this)">Buy Now</button>`;
-    }
-}
+    document.addEventListener("DOMContentLoaded", initHomePage);
 </script>
-
-
 </body>
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    const cart = getCart();
-    const actionDivs = document.querySelectorAll(".action");
 
-    actionDivs.forEach(div => {
-        const id = div.dataset.id;
-        const count = cart[id];
-
-        if (count) {
-            div.innerHTML = `
-                <button onclick="decrease(this)">-</button>
-                <span class="count">${count}</span>
-                <button onclick="increase(this)">+</button>
-            `;
-        } else {
-            div.innerHTML = `<button onclick="buyNow(this)">Buy Now</button>`;
-        }
-    });
-});
-</script>
 
 </html>
