@@ -14,10 +14,10 @@
     </header>
 
     <main class="book-container">
-        {% for i in range(1, 10) %}
+        {% for book in books %}
         <div class="book-card">
-            <img src="https://placehold.co/200x300?text=Book+{{ i }}" alt="Book {{ i }}">
-            <h4>Book Title {{ i }}</h4>
+            <img src="{{ book.image }}" alt="{{ book.title }}">
+            <h4>{{ book.title }}</h4>
             <button>Buy Now</button>
         </div>
         {% endfor %}
