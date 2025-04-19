@@ -10,6 +10,8 @@
     <header class="store-header">
         <h1>Welcome to Vineeth's Book Store</h1>
         <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+        <a href="{{ url_for('cart') }}" class="logout-btn" style="right: 150px;">🛒 View Cart</a>
+
 
     </header>
 
@@ -18,10 +20,86 @@
         <div class="book-card">
             <img src="{{ book.image }}" alt="{{ book.title }}">
             <h4>{{ book.title }}</h4>
-            <button>Buy Now</button>
+            <p style="margin: 5px 0; font-weight: bold;">${{ book.price }}</p>
+            <div class="action" data-id="{{ book.id }}">
+                <button onclick="buyNow(this)">Buy Now</button>
+            </div>
         </div>
+
         {% endfor %}
     </main>
 
+<script>
+function getCart() {
+    return JSON.parse(localStorage.getItem('cart')) || {};
+}
+
+function saveCart(cart) {
+    localStorage.setItem('cart', JSON.stringify(cart));
+}
+
+function buyNow(btn) {
+    const actionDiv = btn.parentElement;
+    const bookId = actionDiv.dataset.id;
+    const cart = getCart();
+    cart[bookId] = 1;
+    saveCart(cart);
+
+    actionDiv.innerHTML = `
+        <button onclick="decrease(this)">-</button>
+        <span class="count">1</span>
+        <button onclick="increase(this)">+</button>
+    `;
+}
+
+function increase(btn) {
+    const countSpan = btn.parentElement.querySelector(".count");
+    const bookId = btn.parentElement.dataset.id;
+    const cart = getCart();
+    cart[bookId] = (cart[bookId] || 1) + 1;
+    saveCart(cart);
+    countSpan.textContent = cart[bookId];
+}
+
+function decrease(btn) {
+    const countSpan = btn.parentElement.querySelector(".count");
+    const bookId = btn.parentElement.dataset.id;
+    const cart = getCart();
+    let count = cart[bookId] || 1;
+    if (count > 1) {
+        cart[bookId] = count - 1;
+        saveCart(cart);
+        countSpan.textContent = cart[bookId];
+    } else {
+        delete cart[bookId];
+        saveCart(cart);
+        btn.parentElement.innerHTML = `<button onclick="buyNow(this)">Buy Now</button>`;
+    }
+}
+</script>
+
+
 </body>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const cart = getCart();
+    const actionDivs = document.querySelectorAll(".action");
+
+    actionDivs.forEach(div => {
+        const id = div.dataset.id;
+        const count = cart[id];
+
+        if (count) {
+            div.innerHTML = `
+                <button onclick="decrease(this)">-</button>
+                <span class="count">${count}</span>
+                <button onclick="increase(this)">+</button>
+            `;
+        } else {
+            div.innerHTML = `<button onclick="buyNow(this)">Buy Now</button>`;
+        }
+    });
+});
+</script>
+
 </html>

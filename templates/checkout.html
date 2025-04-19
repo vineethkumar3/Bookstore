@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Checkout</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header class="store-header">
+        <h1>Payment Checkout</h1>
+    </header>
+
+    <main class="book-container" style="display: block; max-width: 500px;">
+        <h2>Order Summary</h2>
+        <ul id="summary"></ul>
+
+        <h3>Payment Info</h3>
+        <form onsubmit="submitPayment(event)">
+            <input type="text" placeholder="Card Number" required style="width: 100%; padding: 10px; margin: 10px 0;">
+            <input type="text" placeholder="MM/YY" required style="width: 48%; padding: 10px; margin-right: 4%;">
+            <input type="text" placeholder="CVV" required style="width: 48%; padding: 10px;">
+            <input type="submit" value="Pay Now" style="width: 100%; padding: 12px; background-color: #4facfe; color: white; border: none; border-radius: 5px; font-size: 16px; margin-top: 20px;">
+        </form>
+
+        <p id="success" style="display:none; font-weight: bold; color: green; text-align: center; margin-top: 20px;">✅ Payment Successful!</p>
+    </main>
+
+    <script>
+        const books = [
+            {id: 1, title: "Atomic Habits"},
+            {id: 2, title: "Rich Dad Poor Dad"},
+            {id: 3, title: "The Alchemist"},
+            {id: 4, title: "Harry Potter"},
+            {id: 5, title: "To Kill a Mockingbird"},
+            {id: 6, title: "Think and Grow Rich"},
+            {id: 7, title: "The Power of Now"},
+            {id: 8, title: "The Subtle Art..."},
+            {id: 9, title: "Ikigai"}
+        ];
+
+        const cart = JSON.parse(localStorage.getItem('cart')) || {};
+        const summary = document.getElementById("summary");
+
+        Object.keys(cart).forEach(id => {
+            const book = books.find(b => b.id == id);
+            const qty = cart[id];
+            if (book) {
+                summary.innerHTML += `<li>${book.title} × ${qty}</li>`;
+            }
+        });
+
+        function submitPayment(e) {
+            e.preventDefault();
+            localStorage.removeItem('cart'); // Clear cart
+            document.getElementById('success').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
