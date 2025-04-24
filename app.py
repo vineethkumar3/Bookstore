@@ -50,6 +50,26 @@ def login():
             return render_template('login.html', error='Invalid credentials')
     return render_template('login.html')
 
+@app.route('/update-cart', methods=['POST'])
+def update_cart():
+    if 'user' not in session:
+        return {'status': 'unauthorized'}, 401
+
+    data = request.json
+    book_id = int(data['book_id'])
+    quantity = int(data['quantity'])
+
+    db = Database()
+    user = db.get_user_by_name(session['user'])
+    user_id = user[0]
+
+    if quantity > 0:
+        db.upsert_cart(user_id, book_id, quantity)
+    else:
+        db.remove_from_cart(user_id, book_id)
+
+    return {'status': 'updated'}
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():

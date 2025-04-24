@@ -68,3 +68,35 @@ class Database:
             cursor.close()
             conn.close()
 
+    def upsert_cart(self, user_id, book_id, quantity):
+        cursor, conn = self.connection()
+        if not cursor or not conn:
+            return
+        try:
+            query = '''
+            INSERT INTO user_cart (user_id, book_id, quantity)
+            VALUES (%s, %s, %s)
+            ON CONFLICT (user_id, book_id)
+            DO UPDATE SET quantity = EXCLUDED.quantity;
+            '''
+            cursor.execute(query, (user_id, book_id, quantity))
+            conn.commit()
+        except Exception as e:
+            print("❌ Upsert cart error:", e)
+        finally:
+            cursor.close()
+            conn.close()
+
+    def remove_from_cart(self, user_id, book_id):
+        cursor, conn = self.connection()
+        if not cursor or not conn:
+            return
+        try:
+            cursor.execute("DELETE FROM user_cart WHERE user_id = %s AND book_id = %s;", (user_id, book_id))
+            conn.commit()
+        except Exception as e:
+            print("❌ Remove cart error:", e)
+        finally:
+            cursor.close()
+            conn.close()
+

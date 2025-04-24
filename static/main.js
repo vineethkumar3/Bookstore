@@ -16,7 +16,10 @@ function buyNow(btn) {
     cart[bookId] = 1;
     saveCart(cart);
     renderButton(actionDiv, bookId, 1);
+
+    syncCartToServer(bookId, 1);
 }
+
 
 function increase(btn) {
     const countSpan = btn.parentElement.querySelector(".count");
@@ -25,20 +28,26 @@ function increase(btn) {
     cart[bookId] = (cart[bookId] || 1) + 1;
     saveCart(cart);
     countSpan.textContent = cart[bookId];
+
+    syncCartToServer(bookId, cart[bookId]);
 }
+
 
 function decrease(btn) {
     const countSpan = btn.parentElement.querySelector(".count");
     const bookId = btn.parentElement.dataset.id;
     const cart = getCart();
+
     if (cart[bookId] > 1) {
         cart[bookId] -= 1;
         saveCart(cart);
         countSpan.textContent = cart[bookId];
+        syncCartToServer(bookId, cart[bookId]);
     } else {
         delete cart[bookId];
         saveCart(cart);
         btn.parentElement.innerHTML = `<button onclick="buyNow(this)">Buy Now</button>`;
+        syncCartToServer(bookId, 0); // to remove from DB
     }
 }
 
@@ -107,4 +116,30 @@ function submitPayment(e) {
     document.getElementById('success').style.display = 'block';
     document.getElementById('invoice-link')?.style?.setProperty("display", "block");
     document.getElementById('home-link')?.style?.setProperty("display", "block");
+}
+
+function submitPayment(e) {
+    e.preventDefault();
+    const cart = getCart();
+    fetch("/save-cart", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(cart)
+    }).then(res => res.json())
+      .then(data => {
+          if (data.status === 'success') {
+              localStorage.removeItem('cart');
+              document.getElementById('success').style.display = 'block';
+              document.getElementById('invoice-link')?.style?.setProperty("display", "block");
+              document.getElementById('home-link')?.style?.setProperty("display", "block");
+          }
+      });
+}
+
+function syncCartToServer(bookId, quantity) {
+    fetch("/update-cart", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ book_id: bookId, quantity: quantity })
+    });
 }
