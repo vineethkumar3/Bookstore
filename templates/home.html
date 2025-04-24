@@ -8,7 +8,7 @@
 <body class="home-page">
 
     <header class="store-header">
-        <h1>Welcome to Vineeth's Book Store</h1>
+        <h1>Welcome to {{ username }} Book Store</h1>
         <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
         <a href="{{ url_for('cart') }}" class="logout-btn" style="right: 150px;">🛒 View Cart</a>
 

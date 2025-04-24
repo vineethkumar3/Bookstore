@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 
+from Test.Connectec2 import Database
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -29,7 +30,7 @@ def home():
         {"id": 8, "title": "The Subtle Art...", "image": "https://m.media-amazon.com/images/I/91uwocAMtSL.jpg","price":10.99},
         {"id": 9, "title": "Ikigai", "image": "https://m.media-amazon.com/images/I/71KilybDOoL.jpg","price":6.99}
     ]
-    return render_template('home.html', books=books)
+    return render_template('home.html', books=books,username=session['user'])
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -37,10 +38,12 @@ def login():
         email = request.form['username']
         pwd = request.form['password']
 
-        user = users.get(email)
-        if user and user['password'] == pwd:
+        #fetching user data from database
+        connect_obj=Database()
+        user_data=connect_obj.get_user_by_name(email)
+        if user_data[3] == str(pwd):
             session.permanent = True
-            session['user'] = user['name']
+            session['user'] = user_data[1]
             session['cart'] = []
             return redirect(url_for('home'))
         else:
@@ -54,7 +57,8 @@ def register():
         name = request.form['name']
         email = request.form['email']
         password = request.form['password']
-
+        connect_obj=Database()
+        connect_obj.insert_user(name,email,password)
         # Use email as the unique identifier
         if email in users:
             return render_template('register.html', error="Email already exists!")
