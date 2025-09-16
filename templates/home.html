@@ -8,20 +8,33 @@
 <body class="home-page">
 
     <header class="store-header">
-        <h1>Welcome to Vineeth's Book Store</h1>
+        <h1>Welcome to {{ username }} Book Store</h1>
         <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+        <a href="{{ url_for('cart') }}" class="logout-btn" style="right: 150px;">🛒 View Cart</a>
+
 
     </header>
 
     <main class="book-container">
-        {% for i in range(1, 10) %}
+        {% for book in books %}
         <div class="book-card">
-            <img src="https://placehold.co/200x300?text=Book+{{ i }}" alt="Book {{ i }}">
-            <h4>Book Title {{ i }}</h4>
-            <button>Buy Now</button>
+            <img src="{{ book.image }}" alt="{{ book.title }}">
+            <h4>{{ book.title }}</h4>
+            <p style="margin: 5px 0; font-weight: bold;">${{ book.price }}</p>
+            <div class="action" data-id="{{ book.id }}">
+                <button onclick="buyNow(this)">Buy Now</button>
+            </div>
         </div>
+
         {% endfor %}
     </main>
 
+
+<script src="{{ url_for('static', filename='main.js') }}"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", initHomePage);
+</script>
 </body>
+
+
 </html>
